@@ -15,9 +15,11 @@ namespace StopwatchApplication.Model
     /// 5) Запускать следующий круг.
     /// 6) Просматривать время круга и общее время.
     /// </summary>
-    public class StopwatchModel : IDisposable
+    public class StopwatchModel : BaseModel, IDisposable
     {
         #region Fields
+        private readonly int timerInterval = 100;
+
         /// <summary>
         /// Коллекция, содержащая время преодоления каждого круга.
         /// </summary>
@@ -50,11 +52,11 @@ namespace StopwatchApplication.Model
         /// </su1mmary>
         public StopwatchModel()
         {
-            this.countingTimer.Interval = 100;
+            this.countingTimer.Interval = timerInterval;
 
             this.countingTimer.Elapsed += new ElapsedEventHandler((S, E) =>
             {
-                this.TotalStopwatchTime += new TimeSpan(0, 0, 0, 0, 100);
+                this.TotalStopwatchTime += new TimeSpan(0, 0, 0, 0, timerInterval);
             });
 
             TimeOfEachLap = new ReadOnlyObservableCollection<TimeSpan>(timeOfEachLapField);
@@ -69,12 +71,18 @@ namespace StopwatchApplication.Model
         {
             get
             {
-                return totalStopwatchTimeField;
+                lock (this)
+                {
+                    return totalStopwatchTimeField;
+                }
             }
 
             private set
             {
-                this.totalStopwatchTimeField = value;
+                lock (this)
+                {
+                    this.totalStopwatchTimeField = value;
+                }
             }
         }
 
@@ -112,6 +120,8 @@ namespace StopwatchApplication.Model
         public void Reset()
         {
             this.TotalStopwatchTime = TimeSpan.Zero;
+            this.timeOfEachLapField.Clear();
+            this.CountLaps = 0;
         }
 
         /// <summary>

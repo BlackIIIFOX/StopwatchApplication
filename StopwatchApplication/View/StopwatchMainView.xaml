@@ -9,5 +9,42 @@
     Width="800"
     Height="450"
     mc:Ignorable="d">
-    <Grid />
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <Grid>
+
+            <TextBlock Text="{Binding Path=Stopwatch.TotalStopwatchTime, StringFormat={}{0:%m} minutes {0:%s} seconds {0:%f} ms, FallbackValue=0 minutes 0 seconds 0 ms}" />
+
+            <StackPanel Orientation="Horizontal">
+                <Button
+                    Width="100"
+                    Height="40"
+                    Command="{Binding StartStopwatchCommand}"
+                    Content="Старт" />
+                <Button
+                    Width="100"
+                    Height="40"
+                    Command="{Binding StopStopwatchCommand}"
+                    Content="Стоп" />
+                <Button
+                    Width="100"
+                    Height="40"
+                    Command="{Binding ResetStopwatchCommand}"
+                    Content="Сброс" />
+                <Button
+                    Width="100"
+                    Height="40"
+                    Command="{Binding StartNewLapStopwatchCommand}"
+                    Content="Круг" />
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <ListBox ItemsSource="{Binding Path=Laps}" />
+        </Grid>
+    </Grid>
 </Window>
