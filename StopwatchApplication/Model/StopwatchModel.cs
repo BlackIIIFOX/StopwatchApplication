@@ -18,12 +18,15 @@ namespace StopwatchApplication.Model
     public class StopwatchModel : BaseModel, IDisposable
     {
         #region Fields
-        private readonly int timerInterval = 100;
+        /// <summary>
+        /// Интервал таймера для отсчета секундомера.
+        /// </summary>
+        private readonly int timerInterval = 10;
 
         /// <summary>
         /// Коллекция, содержащая время преодоления каждого круга.
         /// </summary>
-        private readonly ObservableCollection<TimeSpan> timeOfEachLapField = new ObservableCollection<TimeSpan>();
+        private readonly ObservableCollection<Lap> timeOfEachLapField = new ObservableCollection<Lap>();
 
         /// <summary>
         /// Instantiate a SafeHandle instance.
@@ -44,6 +47,8 @@ namespace StopwatchApplication.Model
         /// Flag: Has Dispose already been called?
         /// </summary>
         private bool disposed = false;
+
+        private DateTime lastTimeCallback;
         #endregion
 
         #region Constructor
@@ -56,10 +61,13 @@ namespace StopwatchApplication.Model
 
             this.countingTimer.Elapsed += new ElapsedEventHandler((S, E) =>
             {
-                this.TotalStopwatchTime += new TimeSpan(0, 0, 0, 0, timerInterval);
+                var elapsed = DateTime.Now - this.lastTimeCallback;
+                this.lastTimeCallback = DateTime.Now;
+                this.TotalStopwatchTime += elapsed;
+                //this.TotalStopwatchTime += new TimeSpan(0, 0, 0, 0, timerInterval);
             });
 
-            TimeOfEachLap = new ReadOnlyObservableCollection<TimeSpan>(timeOfEachLapField);
+            TimeOfEachLap = new ReadOnlyObservableCollection<Lap>(timeOfEachLapField);
         }
         #endregion
 
@@ -94,7 +102,7 @@ namespace StopwatchApplication.Model
         /// <summary>
         /// Время кругов.
         /// </summary>
-        public ReadOnlyObservableCollection<TimeSpan> TimeOfEachLap { get; private set; }
+        public ReadOnlyObservableCollection<Lap> TimeOfEachLap { get; private set; }
         #endregion
 
         #region Methods
@@ -104,6 +112,7 @@ namespace StopwatchApplication.Model
         public void Start()
         {
             this.countingTimer.Start();
+            this.lastTimeCallback = DateTime.Now;
         }
 
         /// <summary>
@@ -129,8 +138,11 @@ namespace StopwatchApplication.Model
         /// </summary>
         public void StartNewLap()
         {
-            this.timeOfEachLapField.Add(this.TotalStopwatchTime);
-            this.CountLaps++;
+            TimeSpan lapTime = this.timeOfEachLapField.Count == 0 ?
+                this.TotalStopwatchTime :
+                this.TotalStopwatchTime - this.timeOfEachLapField[this.timeOfEachLapField.Count - 1].TotalTime;
+
+            this.timeOfEachLapField.Add(new Lap(++this.CountLaps, lapTime, this.TotalStopwatchTime));
         }
 
         /// <summary>
@@ -163,6 +175,45 @@ namespace StopwatchApplication.Model
             }
 
             this.disposed = true;
+        }
+        #endregion
+
+        #region Classes
+
+        /// <summary>
+        /// Класс круга.
+        /// Экземпляры класса являются Immutable объектами.
+        /// </summary>
+        public class Lap : BaseModel
+        {
+            #region Fields
+            #endregion
+
+            #region Constructors
+            public Lap(int lapNumber, TimeSpan lapTime, TimeSpan totalTime)
+            {
+                this.LapNumber = lapNumber;
+                this.LapTime = lapTime;
+                this.TotalTime = totalTime;
+            }
+            #endregion
+
+            #region Properties
+            /// <summary>
+            /// Gets номер круга.
+            /// </summary>
+            public int LapNumber { get; private set; }
+            
+            /// <summary>
+            /// Gets время круга.
+            /// </summary>
+            public TimeSpan LapTime { get; private set; }
+            
+            /// <summary>
+            /// Gets общее время секундомера, на котором был завершен круг.
+            /// </summary>
+            public TimeSpan TotalTime { get; private set; }
+            #endregion
         }
         #endregion
 

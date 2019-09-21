@@ -3,6 +3,7 @@ using StopwatchApplication.Model;
 using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using static StopwatchApplication.Model.StopwatchModel;
 
 namespace StopwatchApplication.ViewModel
 {
@@ -25,7 +26,7 @@ namespace StopwatchApplication.ViewModel
         #region Properties
         public StopwatchModel Stopwatch { get; private set; }
 
-        public ReadOnlyObservableCollection<TimeSpan> Laps
+        public ReadOnlyObservableCollection<Lap> Laps
         {
             get
             {

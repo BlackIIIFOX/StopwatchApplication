@@ -8,33 +8,20 @@ namespace StopwatchApplication.Tests
 {
     public class StopwatchModelUnitTests
     {
-        private readonly int increment = 50;
-
         /// <summary>
-        /// ”величивает врем€ ожидание на <see cref="increment"/>.
-        /// »нкрементаци€ необходима, т.к. прерывание не успевает обрабатыватьс€.
+        /// ¬ыполн€ет сравнени€ милисекунд с точностью в 100 мс.
         /// </summary>
-        /// <param name="delay">Ѕазовое врем€ ожидани€.</param>
-        /// <returns>¬рем€ ожидани€ с инкрементом.</returns>
-        private int IncrementDelay(int delay)
+        /// <param name="timeMs1"> акое врем€ сравнивают.</param>
+        /// <param name="timeMs2">— каким временем сравнивают.</param>
+        /// <returns>≈сли времена равны с точностью в 100мс, то возвращаетс€ true, иначе false.</returns>
+        private bool MillisCompare(double timeMs1, double timeMs2)
         {
-            return delay + increment;
-        }
-
-        /// <summary>
-        /// ”меньшает врем€ ожидани€ на <see cref="increment"/>.
-        /// ƒекрмент необходим дл€ приведени€ инкрементированного времени ожидани€ к базовому времени.
-        /// </summary>
-        /// <param name="delay">»нкрементированное врем€.</param>
-        /// <returns>Ѕазовое врем€.</returns>
-        private int DecrementDelay(int delay)
-        {
-            return delay - increment;
+            return Math.Abs(timeMs1 - timeMs2) < 100;
         }
 
         /// <summary>
         /// “ест соответви€ секундомера реальному времени.
-        /// “ест создает секундомер после чего ожидает рандомное кол-во милисекунд реального времени от 10000 до 20000.
+        /// “ест создает секундомер после чего ожидает 23650 милисекунд реального времени.
         /// ѕо истечению обозначенного времени выполн€етс€ остановка секундомера.
         /// ѕосле остановки его врем€ должно совпадать с исходным.
         /// </summary>
@@ -43,7 +30,7 @@ namespace StopwatchApplication.Tests
         {
             // Arranges
             StopwatchModel stopwatch = new StopwatchModel();
-            int timeWaitMs = IncrementDelay(5400);
+            int timeWaitMs = 23650;
 
             // Act
             stopwatch.Start();
@@ -51,7 +38,7 @@ namespace StopwatchApplication.Tests
             stopwatch.Stop();
 
             // Assert
-            Assert.Equal(stopwatch.TotalStopwatchTime.TotalMilliseconds, DecrementDelay(timeWaitMs));
+            Assert.True(MillisCompare(stopwatch.TotalStopwatchTime.TotalMilliseconds, timeWaitMs));
         }
 
         /// <summary>
@@ -86,8 +73,8 @@ namespace StopwatchApplication.Tests
         {
             // Arranges
             StopwatchModel stopwatch = new StopwatchModel();
-            int timeWaitMs = this.IncrementDelay(2000);
-            
+            int timeWaitMs = 2000;
+
             // Act
             stopwatch.Start();
             Thread.Sleep(timeWaitMs);
@@ -96,7 +83,7 @@ namespace StopwatchApplication.Tests
             stopwatch.Stop();
 
             // Assert
-            Assert.Equal(stopwatch.TimeOfEachLap[stopwatch.TimeOfEachLap.Count - 1].TotalMilliseconds, this.DecrementDelay(timeWaitMs));
+            Assert.True(MillisCompare(stopwatch.TimeOfEachLap[stopwatch.TimeOfEachLap.Count - 1].LapTime.TotalMilliseconds, timeWaitMs));
         }
 
         /// <summary>
@@ -133,7 +120,7 @@ namespace StopwatchApplication.Tests
         {
             // Arranges
             StopwatchModel stopwatch = new StopwatchModel();
-            int timeWaitMs = this.IncrementDelay(2000);
+            int timeWaitMs = 2000;
             double concreteTimeStop = 0;
 
             // Act
@@ -142,9 +129,9 @@ namespace StopwatchApplication.Tests
             stopwatch.Stop();
             concreteTimeStop = stopwatch.TotalStopwatchTime.TotalMilliseconds;
             Thread.Sleep(timeWaitMs);
-            
+
             // Assert
-            Assert.True(concreteTimeStop.Equals(stopwatch.TotalStopwatchTime.TotalMilliseconds));
+            Assert.True(MillisCompare(concreteTimeStop, stopwatch.TotalStopwatchTime.TotalMilliseconds));
         }
 
         /// <summary>
@@ -157,7 +144,7 @@ namespace StopwatchApplication.Tests
         {
             // Arranges
             StopwatchModel stopwatch = new StopwatchModel();
-            int timeWaitMsFirst = this.IncrementDelay(1200), timeWaitMsSecond = this.IncrementDelay(600);
+            int timeWaitMsFirst = 1200, timeWaitMsSecond = 600;
 
             // Act
             stopwatch.Start();
@@ -169,7 +156,7 @@ namespace StopwatchApplication.Tests
             stopwatch.Stop();
 
             // Assert
-            Assert.Equal(this.DecrementDelay(timeWaitMsFirst) + this.DecrementDelay(timeWaitMsSecond), stopwatch.TotalStopwatchTime.TotalMilliseconds);
+            Assert.True(this.MillisCompare(timeWaitMsFirst + timeWaitMsSecond, stopwatch.TotalStopwatchTime.TotalMilliseconds));
         }
     }
 }

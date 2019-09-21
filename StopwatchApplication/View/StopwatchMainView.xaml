@@ -17,7 +17,8 @@
 
         <Grid>
 
-            <TextBlock Text="{Binding Path=Stopwatch.TotalStopwatchTime, StringFormat={}{0:%m} minutes {0:%s} seconds {0:%f} ms, FallbackValue=0 minutes 0 seconds 0 ms}" />
+            <!--<TextBlock Text="{Binding Path=Stopwatch.TotalStopwatchTime, StringFormat={}{0:%m} minutes {0:%s} seconds {0:%f} ms, FallbackValue=0 minutes 0 seconds 0 ms}" />-->
+            <TextBlock Text="{Binding Path=Stopwatch.TotalStopwatchTime}" />
 
             <StackPanel Orientation="Horizontal">
                 <Button
@@ -44,7 +45,17 @@
         </Grid>
 
         <Grid Grid.Row="1">
-            <ListBox ItemsSource="{Binding Path=Laps}" />
+            <ListBox ItemsSource="{Binding Path=Laps}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Margin="10" Text="{Binding LapNumber}" />
+                            <TextBlock Margin="10" Text="{Binding LapTime}" />
+                            <TextBlock Margin="10" Text="{Binding TotalTime}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </Grid>
     </Grid>
 </Window>
