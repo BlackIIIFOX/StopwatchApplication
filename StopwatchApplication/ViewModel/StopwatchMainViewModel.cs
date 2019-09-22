@@ -10,7 +10,19 @@ namespace StopwatchApplication.ViewModel
     /// <summary>
     /// Состояния работы окна <see cref="StopwatchMainView"/>.
     /// </summary>
-    public enum StopwatchViewModes { Launch, Run, Wait, DisplayLap }
+    public enum StopwatchViewModes {
+        /// <summary>
+        /// Секундомер запущен. Из View доступна остановка секундомера и начало нового круга.
+        /// </summary>
+        Run,
+        /// <summary>
+        /// Секундомер в ожидании. Из View доступен запуск и сброс секундомера.
+        /// </summary>
+        Wait,
+        /// <summary>
+        /// На секундомере отображаются контрольные точки кругов.
+        /// </summary>
+        DisplayLap }
 
     /// <summary>
     /// ViewModel основного окна приложения.
@@ -19,6 +31,11 @@ namespace StopwatchApplication.ViewModel
     {
         #region Fields
         private readonly StopwatchModel stopwatchField = new StopwatchModel();
+
+        /// <summary>
+        /// Хранит состояние, которое было до отображение информации о кругах.
+        /// </summary>
+        private StopwatchViewModes lastStopwatchViewMode;
         #endregion
 
         #region Constructors
@@ -53,6 +70,28 @@ namespace StopwatchApplication.ViewModel
         #endregion
 
         #region Commands
+        /// <summary>
+        /// Gets команду отображения информации о кругах.
+        /// </summary>
+        public ICommand DisplayLapsCommand
+        {
+            get
+            {
+                return new RelayCommand((object obj) => this.DisplayLaps());
+            }
+        }
+
+        /// <summary>
+        /// Gets команду скрытия информации о кругах.
+        /// </summary>
+        public ICommand HideLapsCommand
+        {
+            get
+            {
+                return new RelayCommand((object obj) => this.HideLaps());
+            }
+        }
+
         /// <summary>
         /// Gets команду старта секундомера.
         /// </summary>
@@ -151,6 +190,23 @@ namespace StopwatchApplication.ViewModel
         private void StartNewLapStopwatch()
         {
             this.Stopwatch.StartNewLap();
+        }
+
+        /// <summary>
+        /// Изменяет состояние <see cref="StopwatchViewMode"/> на отображение полного списка кругов.
+        /// </summary>
+        private void DisplayLaps()
+        {
+            this.lastStopwatchViewMode = this.StopwatchViewMode;
+            this.StopwatchViewMode = StopwatchViewModes.DisplayLap;
+        }
+
+        /// <summary>
+        /// Возвращается состояние <see cref="StopwatchViewMode"/> на состояние, которое было до него.
+        /// </summary>
+        private void HideLaps()
+        {
+            this.StopwatchViewMode = lastStopwatchViewMode;
         }
         #endregion
     }

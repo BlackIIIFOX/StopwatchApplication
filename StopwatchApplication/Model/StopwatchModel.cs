@@ -73,7 +73,10 @@ namespace StopwatchApplication.Model
                 this.lastTimeCallback = DateTime.Now;
                 this.TotalStopwatchTime += elapsed;
 
-                this.CurrentLapTime = CountLaps == 0 ? this.TotalStopwatchTime : this.TotalStopwatchTime - this.TimeOfEachLap[this.CountLaps - 1].TotalTime;
+                lock (this)
+                {
+                    this.CurrentLapTime = CountLaps == 0 ? this.TotalStopwatchTime : this.TotalStopwatchTime - this.TimeOfEachLap[this.CountLaps - 1].TotalTime;
+                }
             });
 
             TimeOfEachLap = new ReadOnlyObservableCollection<Lap>(timeOfEachLapField);
@@ -170,11 +173,15 @@ namespace StopwatchApplication.Model
         /// </summary>
         public void StartNewLap()
         {
+
             TimeSpan lapTime = this.timeOfEachLapField.Count == 0 ?
                 this.TotalStopwatchTime :
                 this.TotalStopwatchTime - this.timeOfEachLapField[this.timeOfEachLapField.Count - 1].TotalTime;
 
-            this.timeOfEachLapField.Add(new Lap(++this.CountLaps, lapTime, this.TotalStopwatchTime));
+            lock (this)
+            {
+                this.timeOfEachLapField.Add(new Lap(++this.CountLaps, lapTime, this.TotalStopwatchTime));
+            }
         }
 
         /// <summary>
@@ -235,12 +242,12 @@ namespace StopwatchApplication.Model
             /// Gets номер круга.
             /// </summary>
             public int LapNumber { get; private set; }
-            
+
             /// <summary>
             /// Gets время круга.
             /// </summary>
             public TimeSpan LapTime { get; private set; }
-            
+
             /// <summary>
             /// Gets общее время секундомера, на котором был завершен круг.
             /// </summary>
