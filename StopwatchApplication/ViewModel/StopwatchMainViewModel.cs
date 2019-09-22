@@ -8,6 +8,11 @@ using static StopwatchApplication.Model.StopwatchModel;
 namespace StopwatchApplication.ViewModel
 {
     /// <summary>
+    /// Состояния работы окна <see cref="StopwatchMainView"/>.
+    /// </summary>
+    public enum StopwatchViewModes { Launch, Run, Wait, DisplayLap }
+
+    /// <summary>
     /// ViewModel основного окна приложения.
     /// </summary>
     class StopwatchMainViewModel : ViewModelBase
@@ -20,12 +25,24 @@ namespace StopwatchApplication.ViewModel
         public StopwatchMainViewModel()
         {
             this.Stopwatch = this.stopwatchField;
+            this.StopwatchViewMode = StopwatchViewModes.Wait;
         }
         #endregion
 
         #region Properties
+        /// <summary>
+        /// Gets текущий режим работы окна секундомера. Влияет на отображаемые элементы.
+        /// </summary>
+        public StopwatchViewModes StopwatchViewMode { get; private set; }
+
+        /// <summary>
+        /// Gets секундомер.
+        /// </summary>
         public StopwatchModel Stopwatch { get; private set; }
 
+        /// <summary>
+        /// Gets круги секундомера.
+        /// </summary>
         public ReadOnlyObservableCollection<Lap> Laps
         {
             get
@@ -79,6 +96,26 @@ namespace StopwatchApplication.ViewModel
                 return new RelayCommand((object obj) => this.StartNewLapStopwatch());
             }
         }
+
+        /// <summary>
+        /// Gets команду закрытия приложения.
+        /// </summary>
+        public ICommand CloseAppCommand
+        {
+            get
+            {
+                return new RelayCommand((object obj) => this.CloseApp());
+            }
+        }
+
+        /// <summary>
+        /// Закрыть приложение.
+        /// </summary>
+        private void CloseApp()
+        {
+            this.Stopwatch.Dispose();
+            Environment.Exit(1);
+        }
         #endregion
 
         #region Methods
@@ -88,6 +125,7 @@ namespace StopwatchApplication.ViewModel
         private void StartStopwatch()
         {
             this.Stopwatch.Start();
+            this.StopwatchViewMode = StopwatchViewModes.Run;
         }
 
         /// <summary>
@@ -96,6 +134,7 @@ namespace StopwatchApplication.ViewModel
         private void StopStopwatch()
         {
             this.Stopwatch.Stop();
+            this.StopwatchViewMode = StopwatchViewModes.Wait;
         }
 
         /// <summary>

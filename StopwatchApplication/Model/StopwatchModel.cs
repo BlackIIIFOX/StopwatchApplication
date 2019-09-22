@@ -41,13 +41,21 @@ namespace StopwatchApplication.Model
         /// <summary>
         /// Общее время секундомера с начала запуска.
         /// </summary>
-        private TimeSpan totalStopwatchTimeField = new TimeSpan(); 
+        private TimeSpan totalStopwatchTimeField = new TimeSpan();
+
+        /// <summary>
+        /// Время текущего круга.
+        /// </summary>
+        private TimeSpan currentLapTimeField = new TimeSpan();
 
         /// <summary>
         /// Flag: Has Dispose already been called?
         /// </summary>
         private bool disposed = false;
 
+        /// <summary>
+        /// Время последней обработки прерывания таймера. Необходимо для точного отсчета реального времени.
+        /// </summary>
         private DateTime lastTimeCallback;
         #endregion
 
@@ -64,7 +72,8 @@ namespace StopwatchApplication.Model
                 var elapsed = DateTime.Now - this.lastTimeCallback;
                 this.lastTimeCallback = DateTime.Now;
                 this.TotalStopwatchTime += elapsed;
-                //this.TotalStopwatchTime += new TimeSpan(0, 0, 0, 0, timerInterval);
+
+                this.CurrentLapTime = CountLaps == 0 ? this.TotalStopwatchTime : this.TotalStopwatchTime - this.TimeOfEachLap[this.CountLaps - 1].TotalTime;
             });
 
             TimeOfEachLap = new ReadOnlyObservableCollection<Lap>(timeOfEachLapField);
@@ -90,6 +99,28 @@ namespace StopwatchApplication.Model
                 lock (this)
                 {
                     this.totalStopwatchTimeField = value;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets время текущего круга.
+        /// </summary>
+        public TimeSpan CurrentLapTime
+        {
+            get
+            {
+                lock (this)
+                {
+                    return currentLapTimeField;
+                }
+            }
+
+            private set
+            {
+                lock (this)
+                {
+                    this.currentLapTimeField = value;
                 }
             }
         }
@@ -130,6 +161,7 @@ namespace StopwatchApplication.Model
         {
             this.TotalStopwatchTime = TimeSpan.Zero;
             this.timeOfEachLapField.Clear();
+            this.CurrentLapTime = TimeSpan.Zero;
             this.CountLaps = 0;
         }
 
