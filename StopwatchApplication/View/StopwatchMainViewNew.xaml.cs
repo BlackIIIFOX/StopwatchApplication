@@ -24,6 +24,14 @@ namespace StopwatchApplication.View
         {
             InitializeComponent();
             this.DataContext = new StopwatchMainViewModel();
+
+            LableStopwatch.MouseLeftButtonDown += new MouseButtonEventHandler(layoutRoot_MouseLeftButtonDown);
+            BorderTime.MouseLeftButtonDown += new MouseButtonEventHandler(layoutRoot_MouseLeftButtonDown);
+        }
+
+        private void layoutRoot_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            this.DragMove();
         }
     }
 }

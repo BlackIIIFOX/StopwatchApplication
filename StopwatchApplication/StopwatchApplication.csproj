@@ -73,6 +73,7 @@
     <Compile Include="Model\StopwatchModel.cs">
       <ExcludeFromStyleCop>False</ExcludeFromStyleCop>
     </Compile>
+    <Compile Include="Services\Converters\LapIsMoreThanOneConverter.cs" />
     <Compile Include="Services\Converters\LapIncrementConverter.cs" />
     <Compile Include="Services\RelayCommand.cs" />
     <Compile Include="View\StopwatchMainViewNew.xaml.cs">

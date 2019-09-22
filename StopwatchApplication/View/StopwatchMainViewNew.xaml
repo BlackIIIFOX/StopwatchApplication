@@ -8,7 +8,7 @@
     xmlns:local="clr-namespace:StopwatchApplication.View"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="StopwatchMainViewNew"
+    Title="Stopwatch"
     Width="300"
     Height="300"
     AllowsTransparency="True"
@@ -22,8 +22,6 @@
     </WindowChrome.WindowChrome>
 
     <Window.Resources>
-
-
         <Style TargetType="{x:Type Thumb}">
             <Setter Property="Template">
                 <Setter.Value>
@@ -186,6 +184,8 @@
 
         <converters:LapIncrementConverter x:Key="LapIncrementConverter" />
 
+        <converters:LapIsMoreThanOneConverter x:Key="LapIsMoreThanOneConverter" />
+
         <Style x:Key="StylePushButton" TargetType="{x:Type Button}">
 
             <Style.Triggers>
@@ -238,6 +238,7 @@
             </Grid.RowDefinitions>
 
             <Label
+                x:Name="LableStopwatch"
                 Grid.Row="0"
                 Margin="0,20,0,-20"
                 HorizontalAlignment="Center"
@@ -250,6 +251,7 @@
                 <StackPanel>
 
                     <Border
+                        x:Name="BorderTime"
                         Grid.Row="0"
                         Width="290"
                         Margin="0,20,0,0"
@@ -346,14 +348,24 @@
                                     Foreground="#ABA796"
                                     Text="{Binding Path=Stopwatch.CurrentLapTime, StringFormat={}{0:mm}:{0:ss}:{0:ff}, FallbackValue=00:00.00}" />
 
-                                <Button>
+                                <Button ToolTipService.ShowOnDisabled="True">
 
                                     <Button.Style>
                                         <Style BasedOn="{StaticResource StylePushButton}" TargetType="Button">
                                             <Setter Property="Command" Value="{Binding DisplayLapsCommand}" />
+                                            <Setter Property="ToolTip" Value="Show laps" />
+                                            <Setter Property="IsEnabled" Value="True" />
+                                            <Setter Property="ToolTipService.InitialShowDelay" Value="1000" />
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding StopwatchViewMode}" Value="{x:Static enumStateMode:StopwatchViewModes.DisplayLap}">
                                                     <Setter Property="Command" Value="{Binding HideLapsCommand}" />
+                                                    <Setter Property="ToolTip" Value="Back to control" />
+                                                </DataTrigger>
+
+                                                <DataTrigger Binding="{Binding Stopwatch.CountLaps, Converter={StaticResource LapIsMoreThanOneConverter}}" Value="False">
+                                                    <Setter Property="IsEnabled" Value="False" />
+                                                    <Setter Property="ToolTip" Value="Count laps must be one or more" />
+                                                    <Setter Property="ToolTipService.InitialShowDelay" Value="200" />
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
@@ -372,6 +384,10 @@
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding StopwatchViewMode}" Value="{x:Static enumStateMode:StopwatchViewModes.DisplayLap}">
                                                         <Setter Property="Kind" Value="ArrowLeftBoldCircle" />
+                                                    </DataTrigger>
+
+                                                    <DataTrigger Binding="{Binding Stopwatch.CountLaps, Converter={StaticResource LapIsMoreThanOneConverter}}" Value="False">
+                                                        <Setter Property="Opacity" Value="0.3" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -465,10 +481,15 @@
                         </Grid.Style>
 
                         <Grid Grid.Column="0">
-                            <Button Width="90" Margin="40,-5,0,0">
+                            <Button
+                                Width="90"
+                                Margin="40,-5,0,0"
+                                ToolTipService.InitialShowDelay="1000"
+                                ToolTipService.VerticalOffset="-20">
                                 <Button.Style>
                                     <Style BasedOn="{StaticResource StylePushButton}" TargetType="Button">
                                         <Setter Property="Command" Value="{Binding StartNewLapStopwatchCommand}" />
+                                        <Setter Property="ToolTip" Value="Start new lap" />
 
                                         <Setter Property="Content">
                                             <Setter.Value>
@@ -496,6 +517,7 @@
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding StopwatchViewMode}" Value="{x:Static enumStateMode:StopwatchViewModes.Wait}">
                                                 <Setter Property="Command" Value="{Binding ResetStopwatchCommand}" />
+                                                <Setter Property="ToolTip" Value="Reset stopwatch" />
 
                                                 <Setter Property="Content">
                                                     <Setter.Value>
@@ -527,10 +549,15 @@
                         </Grid>
 
                         <Grid Grid.Column="1">
-                            <Button Width="90" Margin="0,-5,40,0">
+                            <Button
+                                Width="90"
+                                Margin="0,-5,40,0"
+                                ToolTipService.InitialShowDelay="1000"
+                                ToolTipService.VerticalOffset="-20">
                                 <Button.Style>
                                     <Style BasedOn="{StaticResource StylePushButton}" TargetType="Button">
                                         <Setter Property="Command" Value="{Binding StopStopwatchCommand}" />
+                                        <Setter Property="ToolTip" Value="Start stopwatch" />
 
                                         <Setter Property="Content">
                                             <Setter.Value>
@@ -557,6 +584,7 @@
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding StopwatchViewMode}" Value="{x:Static enumStateMode:StopwatchViewModes.Wait}">
                                                 <Setter Property="Command" Value="{Binding StartStopwatchCommand}" />
+                                                <Setter Property="ToolTip" Value="Stop stopwatch" />
 
                                                 <Setter Property="Content">
                                                     <Setter.Value>
