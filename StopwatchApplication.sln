@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.29215.179
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StopwatchApplication", "StopwatchApplication\StopwatchApplication.csproj", "{67005C3E-72A6-4380-ABDD-55CF8D280486}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StopwatchApplication.Tests", "StopwatchApplication.Tests\StopwatchApplication.Tests.csproj", "{8B3A7F6E-B811-4950-A26D-3534B1A59D96}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StopwatchApplication.Tests", "StopwatchApplication.Tests\StopwatchApplication.Tests.csproj", "{8B3A7F6E-B811-4950-A26D-3534B1A59D96}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "StopwatchApplicationSetup", "StopwatchApplicationSetup\StopwatchApplicationSetup.vdproj", "{FEF58D9B-5ECC-47A5-9EB6-57F07B2F4F23}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,8 @@ Global
 		{8B3A7F6E-B811-4950-A26D-3534B1A59D96}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B3A7F6E-B811-4950-A26D-3534B1A59D96}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B3A7F6E-B811-4950-A26D-3534B1A59D96}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEF58D9B-5ECC-47A5-9EB6-57F07B2F4F23}.Debug|Any CPU.ActiveCfg = Debug
+		{FEF58D9B-5ECC-47A5-9EB6-57F07B2F4F23}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
